@@ -116,11 +116,11 @@ int cantidad_similar(int x, vector<int> v){
 	int pos_x_right = pos_x + 1;
 	int pos_x_left = pos_x - 1;
 
-	while(x = v[pos_x_left]){ //miramos las posiciones anteriores a la que hemos encontrado
+	while(x == v[pos_x_left]){ //miramos las posiciones anteriores a la que hemos encontrado
 		pos_x_left--;
 		similares++;
 	}
-	while(x = v[pos_x_right]){ //miramos las posiciones anteriores a la que hemos encontrado
+	while(x == v[pos_x_right]){ //miramos las posiciones anteriores a la que hemos encontrado
 		pos_x_right++;
 		similares++;
 	}
@@ -128,13 +128,15 @@ int cantidad_similar(int x, vector<int> v){
 	return similares;
 }
 
-int calculo_similares(vector<int> l1, vector<int> l2){
-	int similares = 0;
+double calculo_similares(vector<int> l1, vector<int> l2){
+	double similares = 0;
 
+	
 	for(int i = 0; i < l1.size(); i++){
-		cout << l1[i]*cantidad_similar(l1[i], l2) << " + ";
+		//cout << l1[i]*cantidad_similar(l1[i], l2) << " + ";
 		similares = similares + l1[i]*cantidad_similar(l1[i], l2);
 	}
+
 
 	return similares;
 }
@@ -166,7 +168,7 @@ int main(){
 
     cout << "La distancia entre las listas es " << distancia_listas(lista_1, lista_2) << endl;
 
-	cout << "SEGUNDA PARTE" << endl << "El cálculo del similarity score es:" << calculo_similares(lista_1, lista_2);
+	cout << "SEGUNDA PARTE" << endl << "El cálculo del similarity score es:" << fixed << calculo_similares(lista_1, lista_2);
 
     return 0;
 }
