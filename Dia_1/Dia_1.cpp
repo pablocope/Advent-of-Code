@@ -1,15 +1,42 @@
 #include <iostream>
 #include <cstdlib>
-#include <ctime>
 #include <cmath>
+#include <sstream>
+#include <string>
 
-#define TAMANYO 5
+#define TAMANYO 1000
 
 using namespace std;
 
+//-----------------------------------------------------------------------------------
 //FUNCIONES
+//-----------------------------------------------------------------------------------
 
-//funciones para ordenar un array mediante QuickSort
+//Función para extraer los números del array
+void leer_lista(int l1[], int l2[]){
+    int count = 0;
+	string input;
+    cout << "Introduce las listas:" << endl;
+
+    while (getline(cin, input) && !input.empty()) {
+        if (count >= TAMANYO) {
+            cerr << "Se ha alcanzado el tamaño máximo del array" << endl;
+            break;
+        }
+
+        stringstream ss(input);
+
+        int num1, num2;
+        if (ss >> num1 >> num2) {    // Extrae dos números de la línea
+            l1[count] = num1;
+            l2[count] = num2;
+            ++count;
+        }
+    }
+
+}
+
+//Funciones para ordenar un array mediante QuickSort
 int Partition(int v[], int ini, int fin){
 
 	int x = v[fin];
@@ -32,14 +59,13 @@ int Partition(int v[], int ini, int fin){
 	return i;
 }
 
-
 void QuickSort(int v[], int ini, int fin){
-        if(ini < fin){
-                int pivot = Partition(v, ini, fin);
+    if(ini < fin){
+        int pivot = Partition(v, ini, fin);
 
-                QuickSort(v, ini, pivot-1);
-                QuickSort(v, pivot+1, fin);
-        }
+        QuickSort(v, ini, pivot-1);
+        QuickSort(v, pivot+1, fin);
+    }
 }
 
 //Función para mostrar por pantalla un array
@@ -48,13 +74,13 @@ void imprimir_lista(int v[], int tamanyo){
 	cout << "{";
 
 	for(int i = 0; i<tamanyo; i++){
-                cout << v[i];
-                if(i < tamanyo-1){
-                        cout << ", ";
-                }else{
-                        cout << "}" << endl;
-                }
+        cout << v[i];
+        if(i < tamanyo-1){
+            cout << ", ";
+        }else{
+            cout << "}" << endl;
         }
+    }
 }
 
 //Funciones para calcular la distancia entre dos listas
@@ -72,20 +98,15 @@ int distancia_listas(int l1[], int l2[], int tamanyo){
     return suma;
 }
 
-
-//PROGRAMA PRINCIPAL
+//-----------------------------------------------------------------------------------
+//                              PROGRAMA PRINCIPAL
+//-----------------------------------------------------------------------------------
 int main(){
-
-    srand(time(NULL));
 
     int lista_1[TAMANYO];
     int lista_2[TAMANYO];
 
-    //Rellenamos los vectores con números aleatorios
-    for(int i = 0; i < TAMANYO; i++){
-        lista_1[i] = rand() % 10;
-        lista_2[i] = rand() % 10;
-    }
+    leer_lista(lista_1, lista_2);
 
     //imprimimos las listas para ver cómo son
     cout << "Las listas sonlas siguientes:" << endl;
