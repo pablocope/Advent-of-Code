@@ -1,11 +1,12 @@
-/*
-7 6 4 2 1
-1 2 7 8 9
-9 7 6 2 1
-1 3 2 4 5
-8 6 4 4 1
-1 3 6 7 9
-*/
+#include <iostream>
+#include <cstdlib>
+#include <cmath>
+#include <sstream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
 //DIA 2 del ADVENT OF CODE
 
 //modificamos parte de la función de leer lista del día 1
@@ -24,7 +25,7 @@ void leer_lista(vector<vector<int>>& result){
             fila.push_back(n);
         }
 
-        if(fila.empty()){ //Mete la fila leida en otro vector
+        if(!fila.empty()){ //Mete la fila leida en otro vector
             result.push_back(fila);
         }
         
@@ -37,37 +38,42 @@ int check_safe(vector<vector<int>> v){
     int n = 0; //Para saber cuantos de los primeros numeros del report son iguales
 
     for(int i = 0; i < v.size(); i++){
+
+        n = 0;
         
-        while(v[i][n] == v[i][n+1] && n < v.size()){
+        while((v[i][n] == v[i][n+1]) && (n < v.size()-1)){
             n++;
         }
+
         if(v[i][n] > v[i][n+1]){ //Comprobamos que sea orden decreciente
             for(int j = 0; j < v[i].size()-1; j++){
-                if(v[i][j] < v[i][j+1]){
+                if(v[i][j] <= v[i][j+1]){
                     report_safe = false;
-                }
-                if(abs(v[i][j] - v[i][j+1]) > 3){ //Comprobamos que disfiera del siguiente en más de 3
+                    break;
+                }else if(abs(v[i][j] - v[i][j+1]) > 3){ //Comprobamos que disfiera del siguiente en más de 3
                     report_safe = false;
+                    break;
+                }else{
+                    report_safe = true;
                 }
             }
         }else if(v[i][n] < v[i][n+1]){ //Comprobamos que sea orden creciente
             for(int j = 0; j < v[i].size()-1; j++){
-                if(v[i][j] > v[i][j+1]){
+                if(v[i][j] >= v[i][j+1]){
                     report_safe = false;
-                }
-                if(abs(v[i][j] - v[i][j+1]) > 3){ //Comprobamos que disfiera del siguiente en más de 3
+                    break;
+                }else if(abs(v[i][j] - v[i][j+1]) > 3){ //Comprobamos que disfiera del siguiente en más de 3
                     report_safe = false;
+                    break;
+                }else{
+                    report_safe = true;
                 }
             }
         }
 
-        n=0;
-
         if(report_safe == true){
             safe++;
         }
-
-        report_safe = true;
     }
 
     return safe;
@@ -77,12 +83,11 @@ int main(){
 
     vector<vector<int>> datos;
 
-    leer_lista(&datos);
+    leer_lista(datos);
+
+    cout << datos.size() << endl;
 
     cout << check_safe(datos) << " reportes son seguros." << endl;
-
-    
-    
 
     return 0;
 }
