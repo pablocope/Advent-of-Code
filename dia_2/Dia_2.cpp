@@ -31,31 +31,46 @@ void leer_lista(vector<vector<int>>& result){
     }
 }
 
-bool check_if_safe(vector<vector<int>>& v){
-    
+int check_safe(vector<vector<int>> v){
+    bool report_safe = true;
+    int safe = 0;
+    int n = 0; //Para saber cuantos de los primeros numeros del report son iguales
+
     for(int i = 0; i < v.size(); i++){
-        if(v[i][0] >= v[i][1]){ //Comprobamos que sea orden decreciente
+        
+        while(v[i][n] == v[i][n+1] && n < v.size()){
+            n++;
+        }
+        if(v[i][n] > v[i][n+1]){ //Comprobamos que sea orden decreciente
             for(int j = 0; j < v[i].size()-1; j++){
                 if(v[i][j] < v[i][j+1]){
-                    return false;
+                    report_safe = false;
                 }
                 if(abs(v[i][j] - v[i][j+1]) > 3){ //Comprobamos que disfiera del siguiente en más de 3
-                    return false;
+                    report_safe = false;
                 }
             }
-        }else if(v[i][0] <= v[i][1]){ //Comprobamos que sea orden creciente
+        }else if(v[i][n] < v[i][n+1]){ //Comprobamos que sea orden creciente
             for(int j = 0; j < v[i].size()-1; j++){
                 if(v[i][j] > v[i][j+1]){
-                    return false;
+                    report_safe = false;
                 }
                 if(abs(v[i][j] - v[i][j+1]) > 3){ //Comprobamos que disfiera del siguiente en más de 3
-                    return false;
+                    report_safe = false;
                 }
             }
         }
+
+        n=0;
+
+        if(report_safe == true){
+            safe++;
+        }
+
+        report_safe = true;
     }
 
-    return true;
+    return safe;
 }
 
 int main(){
@@ -63,6 +78,9 @@ int main(){
     vector<vector<int>> datos;
 
     leer_lista(&datos);
+
+    cout << check_safe(datos) << " reportes son seguros." << endl;
+
     
     
 
