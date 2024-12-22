@@ -40,6 +40,7 @@ int check_safe(vector<vector<int>> v){
     for(int i = 0; i < v.size(); i++){
 
         n = 0;
+        int errores = 0;
         
         while((v[i][n] == v[i][n+1]) && (n < v.size()-1)){
             n++;
@@ -48,26 +49,29 @@ int check_safe(vector<vector<int>> v){
         if(v[i][n] > v[i][n+1]){ //Comprobamos que sea orden decreciente
             for(int j = 0; j < v[i].size()-1; j++){
                 if(v[i][j] <= v[i][j+1]){
-                    report_safe = false;
-                    break;
+                    errores++;
                 }else if(abs(v[i][j] - v[i][j+1]) > 3){ //Comprobamos que disfiera del siguiente en más de 3
-                    report_safe = false;
-                    break;
+                    errores++;
                 }else{
                     report_safe = true;
                 }
             }
+            if(errores > 1){
+                report_safe = false;
+            }
+
         }else if(v[i][n] < v[i][n+1]){ //Comprobamos que sea orden creciente
             for(int j = 0; j < v[i].size()-1; j++){
                 if(v[i][j] >= v[i][j+1]){
-                    report_safe = false;
-                    break;
+                    errores++;
                 }else if(abs(v[i][j] - v[i][j+1]) > 3){ //Comprobamos que disfiera del siguiente en más de 3
-                    report_safe = false;
-                    break;
+                    errores++;
                 }else{
                     report_safe = true;
                 }
+            }
+            if(errores > 1){
+                report_safe = false;
             }
         }
 
