@@ -85,7 +85,12 @@ public:
     void imprimir_mapa(){
         for(int i = 0; i < map.size(); i++){
             for(int j = 0; j < map[i].size(); j++){
-                cout << map[i][j].get_caracter();
+                
+                if(map[i][j].get_visited()){
+                    cout << "X";
+                }else{
+                    cout << map[i][j].get_caracter();
+                }
             }
             cout << endl;
         }
@@ -93,61 +98,71 @@ public:
     
     //Las funciones de movimiento devuelven 0 si está todo correcto, en caso de no poder moverse porque hay colisión devuelven un -1
     int move_up(){
+        cout << "Intentando moverse hacia arriba..." << pos_x << " " << pos_y <<endl;
         prev_pos_y = pos_y;
         pos_y--;
 
-        if(check_collision()){
+        if(!check_exit() && check_collision()){
             pos_y = prev_pos_y;
             map[pos_y][pos_x].set_visited();
             return -1;
-        }else{
+        }else if(!check_exit()){
             map[pos_y][pos_x].set_visited();
             return 0;
         }
+        return 0;
     }
 
     int move_right(){
+        cout << "Intentando moverse hacia derecha..." << pos_x << " " << pos_y << endl;
         prev_pos_x = pos_x;
         pos_x++;
 
-        if(check_collision()){
+        if(!check_exit() && check_collision()){
             pos_x = prev_pos_x;
             map[pos_y][pos_x].set_visited();
             return -1;
-        }else{
+        }else if(!check_exit()){
             map[pos_y][pos_x].set_visited();
             return 0;
         }
+        return 0;
     }
 
     int move_down(){
+        cout << "Intentando moverse hacia abajo..." << pos_x << " " << pos_y << endl;
         prev_pos_y = pos_y;
         pos_y++;
-
-        if(check_collision()){
+        
+        if(!check_exit() && check_collision()){
             pos_y = prev_pos_y;
             map[pos_y][pos_x].set_visited();
             return -1;
-        }else{
+        }else if(!check_exit()){
             map[pos_y][pos_x].set_visited();
             return 0;
         }
+        return 0;
     }
 
     int move_left(){
+
+        cout << "Intentando moverse hacia izquierda..." << pos_x << " " <<pos_y << endl;
         prev_pos_x = pos_x;
         pos_x--;
 
-        if(check_collision()){
+        if(!check_exit() && check_collision()){
             pos_x = prev_pos_x;
             map[pos_y][pos_x].set_visited();
             return -1;
-        }else{
+        }else if(!check_exit()){
             map[pos_y][pos_x].set_visited();
             return 0;
         }
+        return 0;
     }
 
+    //Comprueba si en la posión en la que se encuentra hay un obstáculo
     bool check_collision(){
         if(map[pos_y][pos_x].get_caracter() == '#'){
             return true;
@@ -156,10 +171,23 @@ public:
         }
     }
 
+    //Comprueba si en la posición en la que está se ha salido fuera del mapa
+    bool check_exit(){
+        cout << "comprobando que no ha salido" << endl;
+        if(pos_y >= map.size() || pos_y < 0 || pos_x >= map[pos_y].size() || pos_x < 0){
+            cout << "El guardia ha salido" << endl;
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     int recuento(){
+        total_visitadas = 0;
+
         for(int i = 0; i < map.size(); i++){
             for(int j = 0; j < map[i].size(); j++){
-                if(map[i][j].get_visited()){
+                if(map[i][j].get_visited() || map[i][j].get_caracter() == '^'){
                     total_visitadas++;
                 }
             }
@@ -170,41 +198,42 @@ public:
     
 };
 
-/*
-void leer_mapa(vector<vector<Casilla>>& mapa){
-    string input;
-    cout << "Introduce el mapa:" << endl;
-
-    while (getline(cin, input) && !input.empty()) {
-        vector<Casilla> fila;
-        
-        int longitud = input.length();
-        for (int i = 0; i < longitud; i++) {
-            Casilla casilla(input[i]);
-            fila.push_back(casilla);
-        }
-
-        if(!fila.empty()){ //Mete la fila leida en otro vector
-            mapa.push_back(fila);
-        }   
-    }
-}
-
-void imprimir_mapa(vector<vector<Casilla>> mapa){
-    for(int i = 0; i < mapa.size(); i++){
-        for(int j = 0; j < mapa[i].size(); j++){
-            cout << mapa[i][j].get_caracter();
-        }
-        cout << endl;
-    }
-}
-*/
-
 int main(){
 
     Mapa mapa;
 
-    mapa.imprimir_mapa();
+    while(true){
+        while(mapa.move_up() == 0){
+            if(mapa.check_exit()){
+                
+                cout << "El total de casillas pisadas es " << mapa.recuento() << endl;
+                return 0;
+            }
+        }
+        while(mapa.move_right() == 0){
+            if(mapa.check_exit()){
+                
+                cout << "El total de casillas pisadas es " << mapa.recuento() << endl;
+                
+                return 0;
+            }
+        }
+        while(mapa.move_down() == 0){
+            if(mapa.check_exit()){
+                
+                cout << "El total de casillas pisadas es " << mapa.recuento() << endl;
+                
+                return 0;
+            }
+        }
+        while(mapa.move_left() == 0){
+            if(mapa.check_exit()){
+                
+                cout << "El total de casillas pisadas es " << mapa.recuento() << endl;
+                return 0;
+            }
+        }
+    }
 
     return 0;
 }
