@@ -117,7 +117,7 @@ void print(vector<string> v){
     }
     cout << endl;
 }
-
+/* SOLUCIÓN ANTIGUA
 bool check_possible(HashTable towels_table, string design) {
     int i = 0;
 
@@ -144,7 +144,30 @@ bool check_possible(HashTable towels_table, string design) {
     }
 
     return true;
+}*/
+
+bool check_possible(HashTable towels_table, string design, int start = 0) {
+    //Si hemos llegado al final del diseño, es posible construirlo
+    if(start == design.length()) {
+        return true;
+    }
+
+    //Intentamos todos los fragmentos posibles desde el índice actual
+    for(int i = 1; i <= design.length() - start; i++) {
+        string fragmento = design.substr(start, i);
+
+        //Si el fragmento está disponible en la tabla, intentamos avanzar
+        if(towels_table.search(fragmento)) {
+            if(check_possible(towels_table, design, start + i)) {
+                return true;
+            }
+        }
+    }
+
+    //Si no se encuentra combinación, no se puede construir el diseño
+    return false;
 }
+
 
 int main(){
 
