@@ -146,19 +146,20 @@ bool check_possible(HashTable towels_table, string design) {
     return true;
 }*/
 
-bool check_possible(HashTable towels_table, string design, int start = 0) {
+bool check_possible(HashTable towels_table, string design, int start = 0){
     //Si hemos llegado al final del diseño, es posible construirlo
     if(start == design.length()) {
         return true;
     }
 
     //Intentamos todos los fragmentos posibles desde el índice actual
-    for(int i = 1; i <= design.length() - start; i++) {
+    for(int i = 1; i <= design.length() - start; i++){
         string fragmento = design.substr(start, i);
 
         //Si el fragmento está disponible en la tabla, intentamos avanzar
-        if(towels_table.search(fragmento)) {
-            if(check_possible(towels_table, design, start + i)) {
+        if(towels_table.search(fragmento)){
+            cout << "Fragmento encontrado: " << fragmento << endl;
+            if(check_possible(towels_table, design, start + i)){
                 return true;
             }
         }
@@ -184,7 +185,7 @@ int main(){
     print(designs);
 
     for(int i = 0; i < designs.size(); i++){
-        //cout << "----- Combinación: " << designs[i] << " -----" << endl; 
+        cout << "----- Combinación: " << designs[i] << " -----" << endl; 
         if(check_possible(towels_table, designs[i])){
             //cout << "Es posible" << endl;
             patrones_posibles++;
