@@ -146,10 +146,15 @@ bool check_possible(HashTable towels_table, string design) {
     return true;
 }*/
 
-bool check_possible(HashTable towels_table, string design, int start = 0){
+bool check_possible(HashTable towels_table, string design, int start, vector<int> memoria){
     //Si hemos llegado al final del diseño, es posible construirlo
     if(start == design.length()) {
         return true;
+    }
+
+    //Vamos a usar una memoria para almacenar si una rama del problema no ha sido calculada (-1), si una rama es posible (1) o si una rama es imposible (0)
+    if(memoria[start] != -1){
+        return memoria[start];
     }
 
     //Intentamos todos los fragmentos posibles desde el índice actual
@@ -158,14 +163,16 @@ bool check_possible(HashTable towels_table, string design, int start = 0){
 
         //Si el fragmento está disponible en la tabla, intentamos avanzar
         if(towels_table.search(fragmento)){
-            cout << "Fragmento encontrado: " << fragmento << endl;
-            if(check_possible(towels_table, design, start + i)){
+            //cout << "Fragmento encontrado: " << fragmento << endl;
+            if(check_possible(towels_table, design, start + i, memoria)){
+                memoria[start] = 1;
                 return true;
             }
         }
     }
 
     //Si no se encuentra combinación, no se puede construir el diseño
+    memoria[start] = 0;
     return false;
 }
 
@@ -185,14 +192,17 @@ int main(){
     print(designs);
 
     for(int i = 0; i < designs.size(); i++){
-        cout << "----- Combinación: " << designs[i] << " -----" << endl; 
-        if(check_possible(towels_table, designs[i])){
-            //cout << "Es posible" << endl;
+        cout << "----- Combinación: " << designs[i] << " -----" << endl;
+        vector<int> memoria(designs[i].length(), -1); 
+        if(check_possible(towels_table, designs[i], 0, memoria)){
+            cout << "Es posible" << endl;
             patrones_posibles++;
+        }else{
+            cout << "No es posible" << endl;
         }
     }
 
-    cout << patrones_posibles;
+    cout << patrones_posibles << endl;
 
     return 0;
 }
