@@ -27,14 +27,6 @@ public:
 	TableEntry(){
 		this->key = "";
 	}
-    /*
-	friend bool operator==(const TableEntry &te1, const TableEntry &te2){
-		return te1.key == te2.key;
-	}
-
-	friend bool operator!=(const TableEntry &te1, const TableEntry &te2){
-		return !(te1.key == te2.key);
-	}*/
 };
 
 class HashTable {
@@ -43,7 +35,7 @@ private:
     int max; // Tamaño de la tabla
     vector<vector<TableEntry>> table;
 
-    int funcion_hash(string key) { //Calculamos valor hash en función de las letras y su correspondiente posición en la palabra
+    int funcion_hash(string key){ //Calculamos valor hash en función de las letras y su correspondiente posición en la palabra
         int sum = 0;
         for (int i = 0; i < key.size(); i++) {
             char c = key[i];
@@ -66,14 +58,14 @@ public:
         n++;
     }
 
-    int search(string key){ //Hemos adaptado la función de búsqueda para que en vez de devolver el valor de una posición simplemente compruebe si existe una entrada de la tabla con dicha llave
+    bool search(string key){ //Hemos adaptado la función de búsqueda para que en vez de devolver el valor de una posición simplemente compruebe si existe una entrada de la tabla con dicha llave
         int index = funcion_hash(key);
         for (int i = 0; i < table[index].size(); i++) {
             if (table[index][i].key == key) {
-                return 0; //Existe la llave que buscamos en la tabla
+                return true; //Existe la llave que buscamos en la tabla
             }
         }
-        return -1; //No existe la llave que buscamos
+        return false; //No existe la llave que buscamos
     }
 
     void fill_table(vector<string> towels){
@@ -95,7 +87,6 @@ public:
     }
 };
 
-
 //Reaprovechamos parte de la función de lectura del input del día 5
 void leer_lista(vector<string>& towels, vector<string>& designs){
     string input;
@@ -108,18 +99,51 @@ void leer_lista(vector<string>& towels, vector<string>& designs){
         string fila;
 
         while(getline(line_stream, fila, ',')){
+            fila.erase(0, fila.find_first_not_of(" \t")); //Esto sirve para eliminar el espacio que se genera delante de cada palabra
             towels.push_back(fila);
         }
- 
     }
 
     //Leer diseños
     while (getline(cin, input) && !input.empty()) {
         istringstream line_stream(input);
-        string fila;
-
-        designs.push_back(fila);  
+        designs.push_back(input);  
     }
+}
+
+void print(vector<string> v){
+    for(int i = 0; i < v.size(); i++){
+        cout << v[i] << endl;
+    }
+    cout << endl;
+}
+
+bool check_possible(HashTable towels_table, string design) {
+    int i = 0;
+
+    while(i < design.length()) {
+        bool encontrado = false;
+
+        for(int j = design.length() - i; j > 0; j--) {
+            string fragmento = design.substr(i, j);
+            //cout << "Comprobamos fragmento: " << fragmento << endl;
+
+            if(towels_table.search(fragmento)) {
+                //cout << "Fragmento encontrado: " << fragmento << endl;
+                i += j;
+                encontrado = true;
+                break; 
+            }
+        }
+
+        if(!encontrado) {
+            //cout << "No se encontró un fragmento válido a partir de: " << design.substr(i) << endl;
+            
+            return false;
+        }
+    }
+
+    return true;
 }
 
 int main(){
@@ -128,11 +152,23 @@ int main(){
     vector<string> designs;
     vector<string> towels;
 
+    int patrones_posibles = 0;
+
     leer_lista(towels, designs);
     towels_table.fill_table(towels);
+    print(towels);
     towels_table.print();
+    print(designs);
 
+    for(int i = 0; i < designs.size(); i++){
+        //cout << "----- Combinación: " << designs[i] << " -----" << endl; 
+        if(check_possible(towels_table, designs[i])){
+            //cout << "Es posible" << endl;
+            patrones_posibles++;
+        }
+    }
 
+    cout << patrones_posibles;
 
     return 0;
 }
