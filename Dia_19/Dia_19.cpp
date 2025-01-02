@@ -146,7 +146,7 @@ bool check_possible(HashTable towels_table, string design) {
     return true;
 }*/
 
-bool check_possible(HashTable towels_table, string design, int start, vector<int> memoria){
+bool check_possible(HashTable& towels_table, string& design, int start, vector<int>& memoria){
     //Si hemos llegado al final del diseño, es posible construirlo
     if(start == design.length()) {
         return true;
@@ -154,20 +154,19 @@ bool check_possible(HashTable towels_table, string design, int start, vector<int
 
     //Vamos a usar una memoria para almacenar si una rama del problema no ha sido calculada (-1), si una rama es posible (1) o si una rama es imposible (0)
     if(memoria[start] != -1){
-        return memoria[start];
+        return memoria[start] == 1;
     }
 
     //Intentamos todos los fragmentos posibles desde el índice actual
-    for(int i = 1; i <= design.length() - start; i++){
-        string fragmento = design.substr(start, i);
+    for(int i = start+1; i <= design.length(); i++){
+        string fragmento = design.substr(start, i - start);
 
         //Si el fragmento está disponible en la tabla, intentamos avanzar
-        if(towels_table.search(fragmento)){
+        if(towels_table.search(fragmento) && check_possible(towels_table, design, i, memoria)){
             //cout << "Fragmento encontrado: " << fragmento << endl;
-            if(check_possible(towels_table, design, start + i, memoria)){
-                memoria[start] = 1;
-                return true;
-            }
+            memoria[start] = 1;
+            return true;
+            
         }
     }
 
@@ -175,7 +174,6 @@ bool check_possible(HashTable towels_table, string design, int start, vector<int
     memoria[start] = 0;
     return false;
 }
-
 
 int main(){
 
