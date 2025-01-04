@@ -5,6 +5,8 @@
 #include <string>
 #include <list>
 
+#define PARPADEOS 25 //Número de parpadeos que se necesitan
+
 using namespace std;
 
 void leer_lista(list<long long>& lista){
@@ -61,7 +63,7 @@ int blink(list<long long>& stones, int n){
             *it *= 2024;
         }
     }
-    print(stones);
+    //print(stones); //Para ver como van cambiando las piedras pero a partir de una cantidad deja de ser útil
     return blink(stones, n - 1);
 }
 
@@ -72,7 +74,7 @@ int main(){
     leer_lista(stones);
     //print(stones);
 
-    cout << blink(stones, 25) << endl;
+    cout << "Hay " << blink(stones, PARPADEOS) << " piedras." << endl;
 
     return 0;
 }
