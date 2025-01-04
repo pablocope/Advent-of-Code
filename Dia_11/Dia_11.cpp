@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void leer_lista(list<int>& lista){
+void leer_lista(list<long long>& lista){
     string input;
     cout << "Introduce la lista de piedras:" << endl;
 
@@ -21,8 +21,8 @@ void leer_lista(list<int>& lista){
     
 }
 
-void print(list<int> lista){
-    list<int>::iterator it = lista.begin(); //creamos un iterador para que apunte a un elemento de la lista
+void print(list<long long> lista){
+    list<long long>::iterator it = lista.begin(); //creamos un iterador para que apunte a un elemento de la lista
     
     for (it = lista.begin(); it != lista.end(); it++) {
         cout << *it << " ";
@@ -30,7 +30,7 @@ void print(list<int> lista){
     cout << endl;
 }
 
-int contarCifras(int numero) {
+int contarCifras(long long numero) {
     if(numero == 0){
         return 1;
     }
@@ -43,12 +43,12 @@ int contarCifras(int numero) {
     return cifras;
 }
 
-int blink(list<int>& stones, int n){
+int blink(list<long long>& stones, int n){
     if(n <= 0){
         return stones.size();
     }
 
-    list<int>::iterator it = stones.begin();
+    list<long long>::iterator it = stones.begin();
     for(it; it != stones.end(); advance(it, 1)){
         if(*it == 0){
             *it = 1;
@@ -67,7 +67,7 @@ int blink(list<int>& stones, int n){
 
 int main(){
 
-    list<int> stones;
+    list<long long> stones;
 
     leer_lista(stones);
     //print(stones);
