@@ -15,11 +15,12 @@ private:
     int altura; // Valor de altura del nodo
     int pos[2]; // Posición en el mapa
 
-    bool visitado;
+    bool visitado; //Bool para saber si el nodo ha sido visitado, solo sirve para la parte 1, en la dos no nos es útil
 
 public:
-    Nodo(){
-    }
+    Nodo(){} //Constructor vacío para inicializar la lista de nodos
+
+    //Constructor para determinar los datos de un nodo
     Nodo(int id, int altura, int pos_x, int pos_y) {
         this->id = id;
         this->altura = altura;
@@ -28,11 +29,14 @@ public:
         visitado = false;
     }
 
+    //Funciones para obtener datos del nodo
     int getId() { return id; }
     int getAltura() { return altura; }
     int getPosX() { return pos[0]; }
     int getPosY() { return pos[1]; }
     bool getVisitado(){ return visitado;}
+
+    //Funcion para determinar el estado de la variable visitado
     void setVisitado(bool tf){visitado = tf;}
 };
 
@@ -42,6 +46,7 @@ private:
     vector<vector<int>> adjList;             // Lista de adyacencia con los ID de cada nodo
     vector<Nodo> nodos;                      // Lista de nodos que componen el grafo
 
+    //Funciones para crear y rellenar la lista de adyacencia para saber como se conectan los nodos entre sí
     void rellenarAdjList(int x, int y) {
         vector<int> contiguos_posibles;
 
@@ -67,23 +72,29 @@ private:
 
         adjList[x + y * mapa[x].size()] = contiguos_posibles;
     }
+    
+    void crearAdjList() {
+        // Recorremos el mapa para crear nodos y listas de adyacencia
+        for (int i = 0; i < mapa.size(); i++) {
+            for (int j = 0; j < mapa[i].size(); j++) {
+                int id = i + j * mapa[i].size();
+                Nodo nodo(id, mapa[i][j], i, j);
+                nodos[id] = nodo; //Rellenamos el vector de nodos
 
+                rellenarAdjList(i, j);
+            }
+        }
+    }
+
+    //Función para poner todos los nodos como no visitados
     void setNodosFalse(){
         for (int i = 0; i < nodos.size(); i++) {
             nodos[i].setVisitado(false);
         }
     }
 
-    /*void rellenarNodos(){
-        for (int i = 0; i < mapa.size(); i++) {
-            for (int j = 0; j < mapa[i].size(); j++) {
-                Nodo nodo(i + j * mapa[i].size(), mapa[i][j], i, j);
-                nodos[i + j * mapa[i].size()] = nodo;
-            }
-        }
-    }*/
-
 public:
+    //Constructor del grafo
     Grafo() {
         leerMapa();
         adjList.resize(mapa.size() * mapa[0].size());
@@ -109,20 +120,7 @@ public:
         }
     }
 
-    void crearAdjList() {
-        //rellenarNodos();
-        // Recorremos el mapa para crear nodos y listas de adyacencia
-        for (int i = 0; i < mapa.size(); i++) {
-            for (int j = 0; j < mapa[i].size(); j++) {
-                int id = i + j * mapa[i].size();
-                Nodo nodo(id, mapa[i][j], i, j);
-                nodos[id] = nodo;
-
-                rellenarAdjList(i, j);
-            }
-        }
-    }
-
+    //Funciones para imprimir datos de los grafos para comprobar el correcto funcionamiento
     void imprimirAdjList(){
         cout << "Lista de adyacencia:" << endl;
         for (int i = 0; i < adjList.size(); i++) {
@@ -152,6 +150,7 @@ public:
         }
     }
 
+    //Función para encontrar todos los nodos que hay que tengan una altura concreta
     vector<int> encontrarNodosConAltura(int altura) {
         vector<int> ids;
         for (int i = 0; i < nodos.size(); i++) {
@@ -162,82 +161,49 @@ public:
         return ids;
     }
     
+    //Función para retornar el conteo de los distintos nodos alcanzables
     int contarNodosAlcanzables(){
         vector<int> ids_nodo_base = encontrarNodosConAltura(0);
         int total_nodos_alcanzables = 0;
         for(int i = 0; i < ids_nodo_base.size(); i++){
             
             buscarAltura(ids_nodo_base[i], &total_nodos_alcanzables);
-            setNodosFalse();
+            setNodosFalse(); //Borrar esta línea para completar la parte 2
             
         }
         return total_nodos_alcanzables;
     }
 
+    //Función recursiva para hacer el proceso de búsqueda a lo largo del grafo
     void buscarAltura(int id_nodo, int *total){
         //cout << "Buscando en nodo " << id_nodo << endl;
         if(nodos[id_nodo].getAltura() == 9){
             if(nodos[id_nodo].getVisitado() == false){
                 (*total)++;
-                nodos[id_nodo].setVisitado(true);
+                nodos[id_nodo].setVisitado(true); //Borrar esta línea para la parte 2
                 //cout << "Nodo encontrado de altura 9: " << id_nodo << endl;
             }
         }else{
             for(int n = 0; n < adjList[id_nodo].size(); n++){
                 buscarAltura(adjList[id_nodo][n], total);
             }
-        }
-        
+        } 
     }
-/*
-    int contarNodosAlcanzables(int startId, int objetivoAltura) {
-        unordered_map<int, bool> visitado;
-        queue<int> q;
-        q.push(startId);
-        visitado[startId] = true;
-
-        int count = 0;
-        while (!q.empty()) {
-            int currentId = q.front();
-            q.pop();
-
-            if (nodos[currentId].getAltura() == objetivoAltura) {
-                count++;
-            }
-
-            for (int vecino : adjList[currentId]) {
-                if (!visitado[vecino] && nodos[vecino].getAltura() >= nodos[currentId].getAltura()) {
-                    visitado[vecino] = true;
-                    q.push(vecino);
-                }
-            }
-        }
-        return count;
-    }*/
-
     
 };
 
 int main() {
     Grafo grafo;
 
-    grafo.imprimirMapa();
+    //grafo.imprimirMapa();
 
-    grafo.imprimirAdjList();
+    //grafo.imprimirAdjList();
 
-    grafo.imprimirNodos();
+    //grafo.imprimirNodos();
 
     vector<int> nodosAlturaCero = grafo.encontrarNodosConAltura(0);
+
     cout << "Nodos con altura 0 encontrados: " << nodosAlturaCero.size() << endl;
-
-    //int total_rutas = 0;
-
-    /*for (int i = 0; i < nodosAlturaCero.size(); ++i) {
-        int id = nodosAlturaCero[i];
-        int alcanzables = grafo.contarNodosAlcanzables(id);
-        cout << "Desde el nodo con ID " << id << " se pueden alcanzar " << alcanzables << " nodos con altura 9." << endl;
-        total_rutas += alcanzables;
-    }*/
 
     cout << "Total de rutas extraídas: " << grafo.contarNodosAlcanzables() << endl;
 
