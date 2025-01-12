@@ -4,19 +4,27 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 using namespace std;
 
 //-----------------------------------------------------------------------------------
-//FUNCIONES
+//              FUNCIONES
 //-----------------------------------------------------------------------------------
 
 //Función para extraer los números de las listas
 void leer_lista(vector<int>& l1, vector<int>& l2){
+    ifstream archivo("datos.txt");
+    
+    if (!archivo.is_open()) {
+        cout << "Error al abrir el archivo" << endl;
+        return;
+    }
+    
     string input;
     cout << "Introduce las listas:" << endl;
 
-    while (getline(cin, input) && !input.empty()) {
+    while (getline(archivo, input) && !input.empty()) {
         stringstream ss(input);
 
         int num1, num2;
