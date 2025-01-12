@@ -4,22 +4,30 @@
 #include <sstream>
 #include <string>
 #include <list>
+#include <fstream>
 
 #define PARPADEOS 25 //Número de parpadeos que se necesitan
 
 using namespace std;
 
 void leer_lista(list<long long>& lista){
+    ifstream archivo("datos.txt");
+    
+    if (!archivo.is_open()) {
+        cout << "Error al abrir el archivo" << endl;
+        return;
+    }
     string input;
-    cout << "Introduce la lista de piedras:" << endl;
 
-    getline(cin, input);
+    getline(archivo, input);
     istringstream line_stream(input);
     int numero;
         
     while(line_stream >> numero){
         lista.push_back(numero);
     }
+
+    archivo.close();
     
 }
 
