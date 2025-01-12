@@ -6,6 +6,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <fstream>
+
 
 using namespace std;
 
@@ -14,11 +16,17 @@ using namespace std;
 
 //Reaprovechamos parte de la función de lectura del input del día 5
 void leer_lista(vector<string>& towels, vector<string>& designs){
-    string input;
-    cout << "Introduce la lista de toallas y la lista de diseños (input del AoC):" << endl;
+    ifstream archivo("datos.txt");
+    
+        if (!archivo.is_open()) {
+            cout << "Error al abrir el archivo" << endl;
+            return;
+        }
+        string input;
+        
     
     //Leer toallas y ponerlas en un vector
-    while (getline(cin, input) && !input.empty()) {
+    while (getline(archivo, input) && !input.empty()) {
         
         istringstream line_stream(input);
         string fila;
@@ -30,10 +38,11 @@ void leer_lista(vector<string>& towels, vector<string>& designs){
     }
 
     //Leer diseños
-    while (getline(cin, input) && !input.empty()) {
+    while (getline(archivo, input) && !input.empty()) {
         istringstream line_stream(input);
         designs.push_back(input);  
     }
+    archivo.close();
 }
 
 void print(vector<string> v){
