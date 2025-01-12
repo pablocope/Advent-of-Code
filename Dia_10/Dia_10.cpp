@@ -6,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include <queue>
+#include <fstream>
 
 using namespace std;
 
@@ -103,10 +104,16 @@ public:
     }
 
     void leerMapa() {
+        ifstream archivo("datos.txt");
+    
+        if (!archivo.is_open()) {
+            cout << "Error al abrir el archivo" << endl;
+            return;
+        }
         string input;
-        cout << "Introduce el mapa:" << endl;
+        
 
-        while (getline(cin, input) && !input.empty()) {
+        while (getline(archivo, input) && !input.empty()) {
             vector<int> fila;
 
             int longitud = input.length();
@@ -118,6 +125,7 @@ public:
                 mapa.push_back(fila);
             }
         }
+        archivo.close();
     }
 
     //Funciones para imprimir datos de los grafos para comprobar el correcto funcionamiento
