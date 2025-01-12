@@ -2,38 +2,25 @@
 #include <vector>
 #include <sstream>
 #include <string>
+#include <fstream>
 
 using namespace std;
 
-// Clase para un nodo del árbol binario
+//Clase para un nodo del árbol binario
 class Nodo {
 public:
-    int valor;
+    long long valor;
     Nodo* izquierdo;
     Nodo* derecho;
 
-    Nodo(int v) : valor(v), izquierdo(nullptr), derecho(nullptr) {}
+    Nodo(long long v) : valor(v), izquierdo(nullptr), derecho(nullptr) {}
+    long long getValor() { return valor; }
 };
 
-// Clase Árbol Binario
+//Clase Árbol Binario
 class ArbolBinario {
 private:
     Nodo* raiz;
-
-    // Función auxiliar para insertar un valor en el árbol de forma arbitraria
-    void insertarAux(Nodo*& nodo, int valor) {
-        if (nodo == nullptr) {
-            nodo = new Nodo(valor);
-        } else {
-            // Inserción arbitraria (ejemplo: a la izquierda si está libre, luego a la derecha)
-            if (nodo->izquierdo == nullptr) {
-                insertarAux(nodo->izquierdo, valor);
-            } else {
-                insertarAux(nodo->derecho, valor);
-            }
-        }
-    }
-
 
     // Función para liberar memoria (destructor)
     void liberarMemoria(Nodo* nodo) {
@@ -42,6 +29,50 @@ private:
             liberarMemoria(nodo->derecho);
             delete nodo;
         }
+    }
+
+    // Función auxiliar para imprimir el árbol
+    void imprimirArbolAux(Nodo* nodo, int nivel) {
+        if (nodo == nullptr) {
+            return;
+        }
+
+        for (int i = 0; i < nivel; i++) {
+            cout << "  ";
+        }
+        cout << nodo->valor << endl;
+
+        imprimirArbolAux(nodo->izquierdo, nivel + 1);
+        imprimirArbolAux(nodo->derecho, nivel + 1);
+    }
+
+    // Función auxiliar para insertar la lista al árbol
+    void insertarListaAux(Nodo*& nodo, vector<long long> valores, int n) {
+        if (n >= valores.size()) {
+            return;
+        }
+
+        if (n == 1) {
+            nodo = new Nodo(valores[n]);
+        }
+                
+        if (n < valores.size()) {
+            n++;
+            nodo->izquierdo = new Nodo(nodo->getValor() + valores[n]);
+            insertarListaAux(nodo->izquierdo, valores, n);
+            nodo->derecho = new Nodo(nodo->getValor() * valores[n]);
+            insertarListaAux(nodo->derecho, valores, n);
+        }
+    }
+
+    bool buscarNumeroAux(Nodo* nodo, long long valor) {
+        if (nodo == nullptr) {
+            return false;
+        }
+        if (nodo->valor == valor) {
+            return true;
+        }
+        return buscarNumeroAux(nodo->izquierdo, valor) || buscarNumeroAux(nodo->derecho, valor);
     }
 
 public:
@@ -53,48 +84,45 @@ public:
         liberarMemoria(raiz);
     }
 
-    // Función para insertar un valor en el árbol
-    void insertar(int valor) {
-        insertarAux(raiz, valor);
+    bool buscarNumero(long long valor) {
+        return buscarNumeroAux(raiz, valor);
     }
 
-    // Inserta la lista haciendo los cálculos para que el nodo de la izquierda sume el siguiente número y para que el de laderecha multiplique el siguiente número
-    void insertarLista(vector<int> valores){ 
-        multiplicarSumarNodo(raiz, valores, 0);
+    // Crea el arbol a partir de la lista haciendo los cálculos para que el nodo de la izquierda sume el siguiente número y para que el de la derecha multiplique el siguiente número
+    void insertarLista(vector<long long> valores) {
+        int n = 1;
+        insertarListaAux(raiz, valores, n);
     }
-    void multiplicarSumarNodo(Nodo* nodo, vector<int> valores, int n){
-        if(n > valores.size()){
-            return;
-        }else{
-            if(n == 0){
-                raiz = new Nodo(valores[1]);
-                n = 1;
-            }
-            nodo->izquierdo = new Nodo(nodo->valor + valores[n++]);
-            multiplicarSumarNodo(nodo->izquierdo, valores, n++);
 
-            nodo->derecho = new Nodo(nodo->valor + valores[n++]);
-            multiplicarSumarNodo(nodo->derecho, valores, n++);
-        }
+    // Función pública para imprimir el árbol
+    void imprimirArbol() {
+        cout << "Imprimiendo árbol: " << endl;
+        imprimirArbolAux(raiz, 0);
     }
-    
 };
 
-void leerLista(vector<vector<int>>& lista){
-    string input;
-    cout << "Introduce la lista de numeros:" << endl;
+void leerLista(vector<vector<long long>>& lista) {
+    ifstream archivo("datos.txt");
+    
+    if (!archivo.is_open()) {
+        cout << "Error al abrir el archivo" << endl;
+        return;
+    }
 
-    while (getline(cin, input) && !input.empty()) {
-        vector<int> valores;
+    string input;
+    while (getline(archivo, input)) {
+        vector<long long> valores;
         istringstream line_stream(input);
         string fila;
 
+        // Leer hasta el primer ':'
         getline(line_stream, fila, ':');
         if (!fila.empty()) {
-            valores.push_back(stoi(fila));
+            valores.push_back(stoll(fila));
         }
 
-        int valor;
+        long long valor;
+        
         while (line_stream >> valor) {
             valores.push_back(valor);
         }
@@ -103,15 +131,17 @@ void leerLista(vector<vector<int>>& lista){
             lista.push_back(valores);
         }
     }
+
+    archivo.close();
 }
 
-void imprimirLista(vector<vector<int>> lista){
-    for(int i = 0; i < lista.size(); i++){
-        for(int j = 0; j < lista[i].size(); j++){
-            if(j == 0){
+void imprimirLista(vector<vector<long long>> lista) {
+    for (int i = 0; i < lista.size(); i++) {
+        for (int j = 0; j < lista[i].size(); j++) {
+            if (j == 0) {
                 cout << lista[i][j] << ": ";
-            }else{
-                cout << lista[i][j] << " ";   
+            } else {
+                cout << lista[i][j] << " ";
             }
         }
         cout << endl;
@@ -119,14 +149,23 @@ void imprimirLista(vector<vector<int>> lista){
 }
 
 int main() {
-    ArbolBinario arbol;
-
-    vector<vector<int>> lista;
+    vector<vector<long long>> lista;
 
     leerLista(lista);
-    //imprimir_lista(lista);
+    vector<ArbolBinario> arbol(lista.size());
 
+    long long total = 0;
     
+    for (int i = 0; i < lista.size(); i++) {
+        
+        arbol[i].insertarLista(lista[i]);
+        if(arbol[i].buscarNumero(lista[i][0])) {
+            total += lista[i][0];
+        }
+        arbol[i].imprimirArbol();
+    }
+
+    cout << "Resultado: " << total << endl;
 
     return 0;
 }
